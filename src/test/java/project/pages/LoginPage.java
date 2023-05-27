@@ -3,10 +3,10 @@ package project.pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-public class CatalogPage {
+public class LoginPage {
     public WebDriver driver;
 
-    public CatalogPage(WebDriver driver) {
+    public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
     }

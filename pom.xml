@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dasxunya</groupId>
-    <artifactId>OzonTesting</artifactId>
+    <artifactId>HHTesting</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
