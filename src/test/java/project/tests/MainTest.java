@@ -80,16 +80,34 @@ public class MainTest {
     }
 
     @Test
-    public void testFilterParam(){
+    public void testFilterParam() {
         driverList.forEach(driver -> {
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]")));
             wait.until(ExpectedConditions.attributeToBeNotEmpty(driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]")), "href"));
             WebElement filterButton = driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]"));
             filterButton.click();
 
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[5]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[1]/fieldset/input")));
+            WebElement field = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[1]/fieldset/input"));
+            field.sendKeys("Лаборатория Касперского");
+
+            WebElement companyName = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[4]/label/span"));
+            companyName.click();
+
+            WebElement button = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[32]/div[2]/button"));
+            button.click();
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"a11y-main-content\"]/div[4]/div[1]/div/div[1]")));
+            WebElement gottenCompanyName = driver.findElement(By.xpath("//*[@id=\"a11y-main-content\"]/div[4]/div[1]/div/div[1]/span[2]"));
+
+            assertTrue(gottenCompanyName.getText().matches(".*?«Лаборатория Касперского».*?"));
+            driver.quit();
             driver.quit();
         });
     }
