@@ -57,18 +57,17 @@ public class MainTest {
     public void testSearchField() {
         driverList.forEach(driver -> {
             driver.get(ConfProperties.getProperty("main-page"));
-
             driver.manage().window().maximize();
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[4]/div/div[3]/div[1]/div[1]/div/div/div[2]/div/form/div/div[2]/button")));
+            WebElement field = driver.findElement(By.xpath("//*[@id=\"a11y-search-input\"]"));
+
             Class<? extends WebDriver> driverClass = driver.getClass();
             if (driverClass.equals(FirefoxDriver.class)) {
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[4]/div/div[3]/div[1]/div[1]/div/div/div[2]/div/form/div/div[2]/button")));
-                WebElement field = driver.findElement(By.xpath("//*[@id=\"a11y-search-input\"]"));
                 field.sendKeys("Лаборатория Касперского");
                 field.sendKeys(Keys.ENTER);
             } else {
-                WebElement field = driver.findElement(By.xpath("//*[@id=\"a11y-search-input\"]"));
                 field.sendKeys("Лаборатория Касперского\n");
             }
 
@@ -76,6 +75,21 @@ public class MainTest {
             WebElement companyName = driver.findElement(By.xpath("//*[@id=\"a11y-main-content\"]/div[4]/div[1]/div/div[1]/span[2]"));
 
             assertTrue(companyName.getText().matches(".*?«Лаборатория Касперского».*?"));
+            driver.quit();
+        });
+    }
+
+    @Test
+    public void testFilterParam(){
+        driverList.forEach(driver -> {
+            driver.get(ConfProperties.getProperty("main-page"));
+            driver.manage().window().maximize();
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.attributeToBeNotEmpty(driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]")), "href"));
+            WebElement filterButton = driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]"));
+            filterButton.click();
+
             driver.quit();
         });
     }
