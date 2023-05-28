@@ -69,8 +69,13 @@ public class LoginTest {
 //        By element = By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[1]/fieldset/input::value");
 
             WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("(document.getElementsByName('login')[0]).value=''", field);
+
+            try {
+                littleWait.until(ExpectedConditions.attributeToBeNotEmpty(field, "value"));
+                JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+                jsExecutor.executeScript("(document.getElementsByName('login')[0]).value=''", field);
+            } catch (TimeoutException ignored) {
+            }
 
             field.sendKeys("daria.kirill4@gmail.com");
             WebElement button2 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[5]/button[1]"));
