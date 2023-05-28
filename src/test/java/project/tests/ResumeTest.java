@@ -80,7 +80,9 @@ public class ResumeTest {
             if (driverClass.equals(FirefoxDriver.class)) {
                 resumePage.createResume("Руководитель");
             } else resumePage.createResume("Помощник");
-//            driver.quit();
+
+            loginPage.logout();
+            driver.quit();
         });
     }
 
@@ -104,6 +106,8 @@ public class ResumeTest {
             allResumesButton.click();
 
             resumePage.deleteResume();
+            loginPage.logout();
+            driver.quit();
         });
     }
 

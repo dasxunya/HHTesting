@@ -56,7 +56,7 @@ public class LoginTest {
     }
 
     @Test
-    public void testUserLogin() {
+    public void testUserLoginAndLogout() {
         driverList.forEach(driver -> {
             loginPage = new LoginPage(driver);
             driver.get(ConfProperties.getProperty("main-page"));
@@ -65,8 +65,6 @@ public class LoginTest {
             WebElement button = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div/div/div/div/div[5]/a"));
             button.click();
             WebElement field = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[1]/fieldset/input"));
-
-//        By element = By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[1]/fieldset/input::value");
 
             WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -97,6 +95,8 @@ public class LoginTest {
             WebElement span2 = driver.findElement(By.xpath("/html/body/div[12]/div/div/div[2]/div[1]/a/span"));
 
             assertEquals(span2.getText(), "Daria Daria");
+
+            loginPage.logout();
             driver.quit();
         });
     }

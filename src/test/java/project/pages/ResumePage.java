@@ -47,9 +47,10 @@ public class ResumePage {
         } catch (TimeoutException ignored) {
         }
 
-        fieldNumber.sendKeys("9609211500");
+        fieldNumber.sendKeys(Keys.CONTROL + "A");
+        fieldNumber.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).perform();
-//        new Actions(driver).doubleClick(fieldNumber).click(fieldNumber).sendKeys(post).perform();
+        fieldNumber.sendKeys(ConfProperties.getProperty("phone-number"));
         sexButton.click();
         fieldExperience.click();
 
@@ -62,9 +63,10 @@ public class ResumePage {
         } catch (TimeoutException ignored) {
         }
 
-        fieldPosition.sendKeys(post);
+        fieldPosition.sendKeys(Keys.CONTROL + "A");
+        fieldPosition.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).perform();
-//        new Actions(driver).doubleClick(fieldPosition).click(fieldPosition).sendKeys(post).perform();
+        fieldPosition.sendKeys(post);
         sendButton.click();
     }
 
