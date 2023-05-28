@@ -1,15 +1,17 @@
 package project.tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
 import project.pages.LoginPage;
 import project.pages.ResumePage;
@@ -18,6 +20,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ResumeTest {
     public List<WebDriver> driverList;
     public static WebDriver chromeDriver;
@@ -30,6 +33,7 @@ public class ResumeTest {
         WebDriverManager.chromedriver().setup();
         WebDriverManager.firefoxdriver().setup();
     }
+
     @BeforeEach
     public void setup() {
         driverList = new ArrayList<>();
@@ -44,23 +48,62 @@ public class ResumeTest {
         firefoxOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
 
         chromeDriver = new ChromeDriver(chromeOptions);
-//        firefoxDriver = new FirefoxDriver(firefoxOptions);
+        firefoxDriver = new FirefoxDriver(firefoxOptions);
 
         chromeDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-//        firefoxDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
+        firefoxDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
 
         driverList.add(chromeDriver);
-//        driverList.add(firefoxDriver);
+        driverList.add(firefoxDriver);
     }
 
+//    @Order(1)
     @Test
-    public void testCreateResume(){
+    public void testCreateResume() {
         driverList.forEach(driver -> {
             loginPage = new LoginPage(driver);
+            resumePage = new ResumePage(driver);
 
             driver.get(ConfProperties.getProperty("main-page"));
+            driver.manage().window().maximize();
 
             loginPage.login();
+
+            WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
+
+            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"))); //ждем появления информации о профиле
+            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class=\"supernova-button supernova-button_secondary supernova-button_tinted\"]")));
+            WebElement createResumeButton = driver.findElement(By.xpath("//*[@class=\"supernova-button supernova-button_secondary supernova-button_tinted\"]"));
+            createResumeButton.click();
+
+            Class<? extends WebDriver> driverClass = driver.getClass();
+            if (driverClass.equals(FirefoxDriver.class)) {
+                resumePage.createResume("Руководитель");
+            } else resumePage.createResume("Помощник");
+//            driver.quit();
+        });
+    }
+
+//    @Order(2)
+    @Test
+    public void testDeleteResume() {
+        driverList.forEach(driver -> {
+            loginPage = new LoginPage(driver);
+            resumePage = new ResumePage(driver);
+
+            driver.get(ConfProperties.getProperty("main-page"));
+            driver.manage().window().maximize();
+
+            loginPage.login();
+
+            WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
+
+            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"))); //ждем появления информации о профиле
+            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class=\"supernova-button supernova-button_secondary supernova-button_tinted\"]")));
+            WebElement allResumesButton = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[1]/a"));
+            allResumesButton.click();
+
+            resumePage.deleteResume();
         });
     }
 
