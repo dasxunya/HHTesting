@@ -29,6 +29,12 @@ public class ResumePage {
     WebElement deleteButton;
     @FindBy(xpath = "/html/body/div[12]/div/div[1]/div[2]/div/div[1]/form/button")
     WebElement finallyDeleteButton;
+    @FindBy(xpath = "")
+    WebElement personalInfo;
+    @FindBy(xpath = "")
+    WebElement languageInfo;
+    @FindBy(xpath = "")
+    WebElement capabilitiesInfo;
 
     public ResumePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -67,7 +73,10 @@ public class ResumePage {
         fieldPosition.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).perform();
         fieldPosition.sendKeys(post);
-        sendButton.click();
+
+        doScroll();
+        wait.until(ExpectedConditions.elementToBeClickable(sendButton));
+        new Actions(driver).click(sendButton).pause(Duration.ofSeconds(2)).perform();
     }
 
     public void deleteResume() {
@@ -77,5 +86,44 @@ public class ResumePage {
         new Actions(driver).pause(Duration.ofSeconds(2)).click(deleteButton).perform();
         littleWait.until(ExpectedConditions.elementToBeClickable(finallyDeleteButton));
         finallyDeleteButton.click();
+    }
+
+    public void doScroll(){
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        jsExecutor.executeScript("window.scrollBy(0, 1000);");
+    }
+
+    public void changeResumeParamPersonalSettings(WebElement param){
+        param.click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@name=\"firstName[0].string\"]")));
+
+        WebElement fieldForName = driver.findElement(By.xpath("//*[@name=\"firstName[0].string\"]"));
+        fieldForName.sendKeys(Keys.CONTROL + "A");
+        fieldForName.sendKeys(Keys.BACK_SPACE);
+        fieldForName.sendKeys("Дарья");
+
+        doScroll();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), 'Возможен')]")));
+        WebElement radioButton = driver.findElement(By.xpath("//*[contains(text(), 'Возможен')]"));
+        radioButton.click();
+
+        new Actions(driver).pause(Duration.ofSeconds(1));
+
+        WebElement sendButton = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[4]/div/button"));
+        sendButton.click();
+    }
+
+    public void changeResumeParamLanguage(WebElement param){
+        param.click();
+
+
+    }
+
+    public void changeResumeParamCapabilities(WebElement param){
+        param.click();
+
     }
 }

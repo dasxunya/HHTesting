@@ -47,9 +47,8 @@ public class LoginPage {
         WebElement span1 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"));
         span1.click();
 
-        WebElement el = driver.findElement(By.xpath("/html/body/div[11]/div/div/div[2]/div[3]/div/form/button/span"));
-        wait.until(ExpectedConditions.elementToBeClickable(el));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[12]/div/div/div[2]/div[3]/div/form/button/span")));
+        WebElement el = driver.findElement(By.xpath("/html/body/div[12]/div/div/div[2]/div[3]/div/form/button/span"));
         el.click();
-
     }
 }

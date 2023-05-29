@@ -10,12 +10,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
 import project.pages.LoginPage;
 import project.pages.ResumePage;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ public class ResumeTest {
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
 
         FirefoxOptions firefoxOptions = new FirefoxOptions();
+        FirefoxProfile profile = new FirefoxProfile(new File("C:\\Users\\Dasxunya\\AppData\\Local\\Mozilla\\Firefox\\Profiles\\133g30cw.default-release"));
+        firefoxOptions.setProfile(profile);
         firefoxOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
 
         chromeDriver = new ChromeDriver(chromeOptions);
@@ -57,7 +61,7 @@ public class ResumeTest {
         driverList.add(firefoxDriver);
     }
 
-//    @Order(1)
+    //    @Order(1)
     @Test
     public void testCreateResume() {
         driverList.forEach(driver -> {
@@ -81,12 +85,53 @@ public class ResumeTest {
                 resumePage.createResume("Руководитель");
             } else resumePage.createResume("Помощник");
 
-            loginPage.logout();
+//            loginPage.logout();
             driver.quit();
         });
     }
 
-//    @Order(2)
+    //    @Order(2)
+    @Test
+    public void testEditResume() {
+        driverList.forEach(driver -> {
+            loginPage = new LoginPage(driver);
+            resumePage = new ResumePage(driver);
+
+            driver.get(ConfProperties.getProperty("main-page"));
+            driver.manage().window().maximize();
+
+            Class<? extends WebDriver> driverClass = driver.getClass();
+            if (driverClass.equals(FirefoxDriver.class)) {
+                loginPage.login();
+            }
+
+            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
+
+            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"))); //ждем появления информации о профиле
+
+            WebElement showMyResumes = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[1]/a"));
+            showMyResumes.click();
+
+            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/div[5]/div/div/div[8]/div/div/div[3]/a")));
+            WebElement editResume = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/div[5]/div/div/div[8]/div/div/div[3]/a"));
+            editResume.click();
+
+            resumePage.doScroll();
+
+            WebElement personalSettings = driver.findElement(By.xpath("//*[@id=\"a11y-main-content\"]/div[1]/p[2]/a/span"));
+            WebElement language = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div[2]/div/div/div[4]/div[1]/div/div/div[5]/div[1]/div/div/div[1]/a"));
+            WebElement capabilities = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div[2]/div/div/div[4]/div[1]/div/div/div[3]/div[1]/div/div/div[1]/a/span"));
+
+            resumePage.changeResumeParamPersonalSettings(personalSettings);
+//            resumePage.changeResumeParamLanguage(language);
+//            resumePage.changeResumeParamCapabilities(capabilities);
+
+
+        });
+    }
+
+    //    @Order(3)
     @Test
     public void testDeleteResume() {
         driverList.forEach(driver -> {
@@ -96,7 +141,7 @@ public class ResumeTest {
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
-            loginPage.login();
+//            loginPage.login();
 
             WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
 
