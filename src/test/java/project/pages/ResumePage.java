@@ -1,6 +1,8 @@
 package project.pages;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -50,18 +52,30 @@ public class ResumePage {
         fieldNumber.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).perform();
         fieldNumber.sendKeys(ConfProperties.getProperty("phone-number"));
-        jsExecutor.executeScript("window.scrollBy(0, 1000);");
 
+        Class<? extends WebDriver> driverClass = driver.getClass();
+        if (driverClass.equals(ChromeDriver.class)) {
+            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+        } else {
+            jsExecutor.executeScript("window.scrollBy(0, 400);");
+        }
 
         new Actions(driver).pause(Duration.ofSeconds(1)).click(sexButton).perform();
         new Actions(driver).pause(Duration.ofSeconds(1)).click(fieldExperience).perform();
-        jsExecutor.executeScript("window.scrollBy(0, 1000);");
+        if (driverClass.equals(ChromeDriver.class)) {
+            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+        }
 
         new Actions(driver).pause(Duration.ofSeconds(2)).perform();
         fieldPosition.sendKeys(Keys.CONTROL + "A");
         fieldPosition.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).sendKeys(fieldPosition, post).pause(Duration.ofSeconds(1)).perform();
-        jsExecutor.executeScript("window.scrollBy(0, 500);");
+
+        if (driverClass.equals(ChromeDriver.class)) {
+            jsExecutor.executeScript("window.scrollBy(0, 500);");
+        } else {
+            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+        }
 
         wait.until(ExpectedConditions.elementToBeClickable(sendButton));
         new Actions(driver).click(sendButton).pause(Duration.ofSeconds(2)).perform();

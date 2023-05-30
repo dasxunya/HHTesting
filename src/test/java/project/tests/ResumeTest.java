@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+// фаерфокс привереда к зоне видимости объекта при скролле
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ResumeTest {
     public List<WebDriver> driverList;
