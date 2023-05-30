@@ -39,4 +39,4 @@ build/
 *.xml
 .gitignore
 .idea
-../src/main/java/org/dasxunya/
+**/src/main/java/org/dasxunya/
