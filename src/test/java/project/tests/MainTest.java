@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
@@ -87,21 +88,21 @@ public class MainTest {
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]")));
-            wait.until(ExpectedConditions.attributeToBeNotEmpty(driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]")), "href"));
-            WebElement filterButton = driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only-large bloko-button_scale-large\"]"));
-            filterButton.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class='bloko-button bloko-button_icon-only-large bloko-button_scale-large']")));
+            wait.until(ExpectedConditions.attributeToBeNotEmpty(driver.findElement(By.xpath("//*[@class='bloko-button bloko-button_icon-only-large bloko-button_scale-large']")), "href"));
+            WebElement filterButton = driver.findElement(By.xpath("//*[@class='bloko-button bloko-button_icon-only-large bloko-button_scale-large']"));
+            new Actions(driver).pause(Duration.ofSeconds(2)).click(filterButton).perform();
 
 
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[5]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[1]/fieldset/input")));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[1]/fieldset/input")));
             WebElement field = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[1]/fieldset/input"));
-            field.sendKeys("Лаборатория Касперского");
+            new Actions(driver).sendKeys(field, "Лаборатория Касперского").pause(Duration.ofSeconds(1)).perform();
 
             WebElement companyName = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[1]/div[2]/div[4]/label/span"));
             companyName.click();
 
             WebElement button = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/form/div[32]/div[2]/button"));
-            button.click();
+            new Actions(driver).click(button).pause(Duration.ofSeconds(2)).perform();
 
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"a11y-main-content\"]/div[4]/div[1]/div/div[1]")));
             WebElement gottenCompanyName = driver.findElement(By.xpath("//*[@id=\"a11y-main-content\"]/div[4]/div[1]/div/div[1]/span[2]"));

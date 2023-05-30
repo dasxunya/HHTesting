@@ -13,15 +13,15 @@ import java.time.Duration;
 public class ResumePage {
     public WebDriver driver;
 
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[2]/div[2]/div[1]/div[2]/div[2]/div[1]/fieldset/input")
+    @FindBy(xpath = "//*[@name=\"phone[0].formatted\"]")
     WebElement fieldNumber;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[3]/div[2]/div[1]/div[1]/div[3]/div/div[2]/div[2]/label/span")
+    @FindBy(xpath = "//input[@name=\"gender[0].string\" and contains (@value, \"female\")]")
     WebElement sexButton;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[3]/div[2]/div[1]/div[4]/div/div[2]/label/span")
+    @FindBy(xpath = "//*[@class=\"bloko-radio\" and contains (@data-qa, \"without-experience has-experience-s\")]")
     WebElement fieldExperience;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[4]/div[2]/div[1]/div[1]/div[2]/div/fieldset/input")
+    @FindBy(xpath = "//*[@name=\"title[0].string\"]")
     WebElement fieldPosition;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[8]/div[2]/button")
+    @FindBy(xpath = "//*[contains(text(), 'Сохранить и опубликовать')]")
     WebElement sendButton;
     @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/div[5]/div[1]/div/div[8]/div/div/div[3]/a")
     WebElement editButton;
@@ -45,36 +45,24 @@ public class ResumePage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 
-        try {
-            new Actions(driver).click(fieldNumber);
-            wait.until(ExpectedConditions.attributeToBeNotEmpty(fieldNumber, "value"));
-            new Actions(driver).pause(Duration.ofSeconds(3)).perform();
-            jsExecutor.executeScript("(document.getElementsByName('phone[0].formatted')[0]).value=''", fieldNumber);
-        } catch (TimeoutException ignored) {
-        }
-
+        new Actions(driver).pause(Duration.ofSeconds(2)).perform();
         fieldNumber.sendKeys(Keys.CONTROL + "A");
         fieldNumber.sendKeys(Keys.BACK_SPACE);
         new Actions(driver).pause(Duration.ofSeconds(3)).perform();
         fieldNumber.sendKeys(ConfProperties.getProperty("phone-number"));
-        sexButton.click();
-        fieldExperience.click();
-
         jsExecutor.executeScript("window.scrollBy(0, 1000);");
 
-        try {
-            wait.until(ExpectedConditions.attributeToBeNotEmpty(fieldPosition, "value"));
-            new Actions(driver).pause(Duration.ofSeconds(3)).perform();
-            jsExecutor.executeScript("(document.getElementsByName('title[0].string')[0]).value=''", fieldPosition);
-        } catch (TimeoutException ignored) {
-        }
 
+        new Actions(driver).pause(Duration.ofSeconds(1)).click(sexButton).perform();
+        new Actions(driver).pause(Duration.ofSeconds(1)).click(fieldExperience).perform();
+        jsExecutor.executeScript("window.scrollBy(0, 1000);");
+
+        new Actions(driver).pause(Duration.ofSeconds(2)).perform();
         fieldPosition.sendKeys(Keys.CONTROL + "A");
         fieldPosition.sendKeys(Keys.BACK_SPACE);
-        new Actions(driver).pause(Duration.ofSeconds(3)).perform();
-        fieldPosition.sendKeys(post);
+        new Actions(driver).pause(Duration.ofSeconds(3)).sendKeys(fieldPosition, post).pause(Duration.ofSeconds(1)).perform();
+        jsExecutor.executeScript("window.scrollBy(0, 500);");
 
-        doScroll();
         wait.until(ExpectedConditions.elementToBeClickable(sendButton));
         new Actions(driver).click(sendButton).pause(Duration.ofSeconds(2)).perform();
     }

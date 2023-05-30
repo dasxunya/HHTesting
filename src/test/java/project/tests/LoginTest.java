@@ -62,26 +62,10 @@ public class LoginTest {
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
-            WebElement button = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div/div/div/div/div[5]/a"));
-            button.click();
-            WebElement field = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[1]/fieldset/input"));
-
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-            try {
-                littleWait.until(ExpectedConditions.attributeToBeNotEmpty(field, "value"));
-                JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-                jsExecutor.executeScript("(document.getElementsByName('login')[0]).value=''", field);
-            } catch (TimeoutException ignored) {
-            }
-
-            field.sendKeys("daria.kirill4@gmail.com");
-            WebElement button2 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[5]/button[1]"));
-
-            littleWait.until(ExpectedConditions.elementToBeClickable(button2));
-            button2.click();
+            loginPage.login();
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
+            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
 
             wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button")));
             WebElement span1 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"));
