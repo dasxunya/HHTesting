@@ -27,9 +27,9 @@ public class FavoriteTest {
     public List<WebDriver> driverList;
     public static WebDriver chromeDriver;
     public static WebDriver firefoxDriver;
+    public static LoginPage loginPage;
     public static FavoritePage favoritePage;
     public static ResumePage resumePage;
-    public static LoginPage loginPage;
 
     @BeforeAll
     public static void setupDrivers() {
@@ -126,29 +126,6 @@ public class FavoriteTest {
     }
 
     @Order(3)
-    @Test
-    public void showMap() {
-        driverList.forEach(driver -> {
-            LoginPage loginPage = new LoginPage(driver);
-            FavoritePage favoritePage = new FavoritePage(driver);
-
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-
-            driver.get(ConfProperties.getProperty("vacancy-page"));
-            driver.manage().window().maximize();
-
-            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only\" and contains (@data-qa, \"serp_settings__vacancy-map\")]")));
-            WebElement showMap = driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only\" and contains (@data-qa, \"serp_settings__vacancy-map\")]"));
-            showMap.click();
-
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ymaps")));
-            assertNotNull(driver.findElement(By.xpath("//ymaps")));
-
-            driver.quit();
-        });
-    }
-
-    @Order(4)
     @Test
     public void deleteVacancyFromFavorite() {
         driverList.forEach(driver -> {

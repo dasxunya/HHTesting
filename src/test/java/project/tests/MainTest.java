@@ -11,18 +11,22 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
+import project.pages.FavoritePage;
+import project.pages.LoginPage;
 import project.pages.MainPage;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainTest {
     public List<WebDriver> driverList;
     public static WebDriver chromeDriver;
     public static WebDriver firefoxDriver;
+    public static FavoritePage favoritePage;
     public static MainPage mainPage;
 
     @BeforeAll
@@ -109,6 +113,27 @@ public class MainTest {
 
             assertTrue(gottenCompanyName.getText().matches(".*?«Лаборатория Касперского».*?"));
             driver.quit();
+            driver.quit();
+        });
+    }
+
+    @Test
+    public void showMap() {
+        driverList.forEach(driver -> {
+            favoritePage = new FavoritePage(driver);
+
+            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+            driver.get(ConfProperties.getProperty("vacancy-page"));
+            driver.manage().window().maximize();
+
+            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only\" and contains (@data-qa, \"serp_settings__vacancy-map\")]")));
+            WebElement showMap = driver.findElement(By.xpath("//*[@class=\"bloko-button bloko-button_icon-only\" and contains (@data-qa, \"serp_settings__vacancy-map\")]"));
+            showMap.click();
+
+            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ymaps")));
+            assertNotNull(driver.findElement(By.xpath("//ymaps")));
+
             driver.quit();
         });
     }

@@ -100,8 +100,8 @@ public class ResumePage {
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@name=\"firstName[0].string\"]")));
-
         WebElement fieldForName = driver.findElement(By.xpath("//*[@name=\"firstName[0].string\"]"));
+
         fieldForName.sendKeys(Keys.CONTROL + "A");
         fieldForName.sendKeys(Keys.BACK_SPACE);
         fieldForName.sendKeys("Дарья");
