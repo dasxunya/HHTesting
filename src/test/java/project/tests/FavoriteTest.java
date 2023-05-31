@@ -7,13 +7,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.interactions.Actions;
 
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
 import project.pages.FavoritePage;
 import project.pages.LoginPage;
+import project.pages.MainPage;
 import project.pages.ResumePage;
 
 import java.time.Duration;
@@ -30,6 +28,7 @@ public class FavoriteTest {
     public static LoginPage loginPage;
     public static FavoritePage favoritePage;
     public static ResumePage resumePage;
+    public static MainPage mainPage;
 
     @BeforeAll
     public static void setupDrivers() {
@@ -60,7 +59,6 @@ public class FavoriteTest {
         driverList.add(firefoxDriver);
     }
 
-
     @Order(1)
     @Test
     public void testAddVacancyToFavorite() {
@@ -68,44 +66,34 @@ public class FavoriteTest {
             loginPage = new LoginPage(driver);
             favoritePage = new FavoritePage(driver);
             resumePage = new ResumePage(driver);
+            mainPage = new MainPage(driver);
 
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
             loginPage.login();
-
-            WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-
-            bigWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[2]/div/div/div/div/form/div/div[2]/button")));
-            WebElement showAllVacancy = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[2]/div/div/div/div/form/div/div[2]/button"));
-
-            showAllVacancy.click();
+            mainPage.showVacancyWithoutFilters();
 
             Class<? extends WebDriver> driverClass = driver.getClass();
             if (driverClass.equals(FirefoxDriver.class)) {
-                WebElement addVacancyToFavorite = driver.findElements(By.xpath("//*[@class='bloko-button bloko-button_icon-only-small bloko-button_scale-small bloko-button_appearance-outlined' and contains(@data-qa, 'vacancy-search-mark-favorite_false')]")).get(0);
-                new Actions(driver).pause(Duration.ofSeconds(3)).moveToElement(addVacancyToFavorite).click(addVacancyToFavorite).perform();
+                favoritePage.addVacancyToFavorite(0);
             } else {
-                WebElement addVacancyToFavorite = driver.findElements(By.xpath("//*[@class='bloko-button bloko-button_icon-only-small bloko-button_scale-small bloko-button_appearance-outlined' and contains(@data-qa, 'vacancy-search-mark-favorite_false')]")).get(1);
-                new Actions(driver).pause(Duration.ofSeconds(3)).moveToElement(addVacancyToFavorite).click(addVacancyToFavorite).perform();
+                favoritePage.addVacancyToFavorite(1);
             }
 
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[8]/div/div/div/div[2]/div[1]")));
-            WebElement succes = driver.findElement(By.xpath("/html/body/div[8]/div/div/div/div[2]/div[1]"));
-            assertEquals("Вакансия добавлена в избранное", succes.getText());
+            assertEquals("Вакансия добавлена в избранное", favoritePage.getNotificationText());
+
             driver.quit();
         });
     }
+
     @Order(2)
     @Test
     public void showContacts() {
         driverList.forEach(driver -> {
-            LoginPage loginPage = new LoginPage(driver);
-            FavoritePage favoritePage = new FavoritePage(driver);
-            ResumePage resumePage = new ResumePage(driver);
-
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            favoritePage = new FavoritePage(driver);
+            resumePage = new ResumePage(driver);
+            mainPage = new MainPage(driver);
 
             driver.get(ConfProperties.getProperty("vacancy-page"));
             driver.manage().window().maximize();
@@ -113,13 +101,11 @@ public class FavoriteTest {
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
             jsExecutor.executeScript("window.scrollBy(0, 1300);");
 
-            assertTrue(driver.findElements(By.xpath("//*[@class='bloko-drop__padding-wrapper bloko-drop__padding-wrapper_down']")).isEmpty());
+            assertTrue(mainPage.isContactsEmpty());
 
-            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class='bloko-button bloko-button_kind-success bloko-button_scale-small bloko-button_collapsible bloko-button_appearance-outlined' and contains (@data-qa, 'vacancy-serp__vacancy_contacts')]")));
-            WebElement showContacts = driver.findElement(By.xpath("//*[@class='bloko-button bloko-button_kind-success bloko-button_scale-small bloko-button_collapsible bloko-button_appearance-outlined' and contains (@data-qa, 'vacancy-serp__vacancy_contacts')]"));
-            showContacts.click();
+            mainPage.showContactInfo();
 
-            assertFalse(driver.findElements(By.xpath("//*[@class='bloko-drop__padding-wrapper bloko-drop__padding-wrapper_down']")).isEmpty());
+            assertFalse(mainPage.isContactsEmpty());
 
             driver.quit();
         });
@@ -129,11 +115,9 @@ public class FavoriteTest {
     @Test
     public void deleteVacancyFromFavorite() {
         driverList.forEach(driver -> {
-            LoginPage loginPage = new LoginPage(driver);
-            FavoritePage favoritePage = new FavoritePage(driver);
+            loginPage = new LoginPage(driver);
+            favoritePage = new FavoritePage(driver);
 
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
 
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
@@ -143,17 +127,11 @@ public class FavoriteTest {
                 loginPage.login();
             }
 
-            bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[8]/div[1]/a")));
-            WebElement favoriteIcon = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[8]/div[1]/a"));
+            favoritePage.goToFavoritePage();
+            favoritePage.deleteLastVacancyFromFavorite();
 
-            favoriteIcon.click();
-
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@data-qa='vacancy-search-mark-favorite_true']")));
-            WebElement deleteVacancyFromFavorite = driver.findElement(By.xpath("//button[@data-qa='vacancy-search-mark-favorite_true']"));
-            new Actions(driver).pause(Duration.ofSeconds(3)).moveToElement(deleteVacancyFromFavorite).click(deleteVacancyFromFavorite).pause(Duration.ofSeconds(2)).perform();
-
-            //проверка что класс изменился на не добавленный в фавориты
-            assertEquals("vacancy-search-mark-favorite_false", driver.findElement(By.xpath("//button[@class='bloko-button bloko-button_icon-only-small bloko-button_scale-small bloko-button_appearance-outlined']")).getAttribute("data-qa"));
+            //проверка что статус изменился на не добавленный в фавориты
+            assertEquals("vacancy-search-mark-favorite_false", favoritePage.getLastIconStatus());
             driver.quit();
         });
     }

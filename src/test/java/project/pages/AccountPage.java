@@ -25,8 +25,6 @@ public class AccountPage {
     WebElement loadedChats;
     @FindBy(xpath = "//*[@class='supernova-link' and @data-qa='mainmenu_myResumes']")
     WebElement myResumes;
-    @FindBy(xpath = "")
-    WebElement element3;
 
     public AccountPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -54,7 +52,7 @@ public class AccountPage {
         littleWait.until(ExpectedConditions.elementToBeClickable(readyResponses));
     }
 
-    public void showMyResumes(){
+    public void showMyResumes() {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(10));
         littleWait.until(ExpectedConditions.elementToBeClickable(myResumes));
         myResumes.click();
