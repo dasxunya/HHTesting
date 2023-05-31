@@ -75,4 +75,8 @@ public class LoginPage {
         littleWait.until(ExpectedConditions.visibilityOf(username));
         return username.getText();
     }
+
+    public boolean isUserLogout(){
+        return buttonForEntry.isDisplayed();
+    }
 }
