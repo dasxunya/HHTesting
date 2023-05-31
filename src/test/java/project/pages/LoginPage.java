@@ -66,17 +66,19 @@ public class LoginPage {
     }
 
     public String getUserName() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-
-        wait.until(ExpectedConditions.visibilityOf(profileButton));
+        waitProfileLoad();
         new Actions(driver).pause(Duration.ofSeconds(2)).click(profileButton).perform();
-
         littleWait.until(ExpectedConditions.visibilityOf(username));
         return username.getText();
     }
 
-    public boolean isUserLogout(){
+    public void waitProfileLoad() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
+        wait.until(ExpectedConditions.visibilityOf(profileButton));
+    }
+
+    public boolean isUserLogout() {
         return buttonForEntry.isDisplayed();
     }
 }

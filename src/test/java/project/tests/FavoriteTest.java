@@ -98,8 +98,7 @@ public class FavoriteTest {
             driver.get(ConfProperties.getProperty("vacancy-page"));
             driver.manage().window().maximize();
 
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("window.scrollBy(0, 1300);");
+            resumePage.doScroll("1300");
 
             assertTrue(mainPage.isContactsEmpty());
 

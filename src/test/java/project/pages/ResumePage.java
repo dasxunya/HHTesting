@@ -2,7 +2,6 @@ package project.pages;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -11,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
 
 import java.time.Duration;
+import java.util.List;
 
 public class ResumePage {
     public WebDriver driver;
@@ -25,11 +25,11 @@ public class ResumePage {
     WebElement fieldPosition;
     @FindBy(xpath = "//*[contains(text(), 'Сохранить и опубликовать')]")
     WebElement sendButton;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div[1]/div[5]/div[1]/div/div[8]/div/div/div[3]/a")
-    WebElement editButton;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div/div[2]/div/div[2]/div/div/div/button[3]")
+    @FindBy(xpath = "//*[@class='applicant-resumes-action']/a[@data-qa='resume-edit']")
+    List<WebElement> editButton;
+    @FindBy(xpath = "//button[@class='bloko-button bloko-button_icon-only' and @data-qa='resume-delete']")
     WebElement deleteButton;
-    @FindBy(xpath = "/html/body/div[12]/div/div[1]/div[2]/div/div[1]/form/button")
+    @FindBy(xpath = "//button[@class='bloko-button' and @data-qa='resume-delete-confirm']")
     WebElement finallyDeleteButton;
     @FindBy(xpath = "//*[@data-qa='job-search-status-change-link']")
     WebElement resumeStatus;
@@ -37,18 +37,31 @@ public class ResumePage {
     WebElement myResumesStatus; //установленнный статус резюме
     @FindBy(xpath = "//*[@class='bloko-button bloko-button_kind-primary bloko-button_scale-small' and contains(@data-qa,'job-search-status-change-confirm')]")
     WebElement setNewResumeStatus;
-    @FindBy(xpath = "")
-    WebElement element;
-
+    @FindBy(xpath = "//*[@class=\"supernova-button supernova-button_secondary supernova-button_tinted\"]")
+    WebElement createResumeButton;
+    @FindBy(xpath = "//*[@class='bloko-text']")
+    List<WebElement> changeStatusCheckbox;
+    @FindBy(xpath = "//*[@name=\"firstName[0].string\"]")
+    WebElement firstNameField;
+    @FindBy(xpath = "//button[@class='bloko-button bloko-button_kind-primary' and @data-qa='resume-submit']")
+    WebElement sendEditedResume;
+    @FindBy(xpath = "//a[@class='resume-block-edit resume-block-edit_capitalize' and @data-qa='resume-block-personal-edit']")
+    WebElement personalSettings;
 
     public ResumePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
     }
 
+    public void goToCreateResume(LoginPage profile) {
+        WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        bigWait.until(ExpectedConditions.visibilityOf(profile.profileButton)); //ждем появления информации о профиле
+        bigWait.until(ExpectedConditions.visibilityOf(createResumeButton));
+        createResumeButton.click();
+    }
+
     public void createResume(String post) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 
         new Actions(driver).pause(Duration.ofSeconds(2)).perform();
         fieldNumber.sendKeys(Keys.CONTROL + "A");
@@ -58,15 +71,15 @@ public class ResumePage {
 
         Class<? extends WebDriver> driverClass = driver.getClass();
         if (driverClass.equals(ChromeDriver.class)) {
-            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+            doScroll("1000");
         } else {
-            jsExecutor.executeScript("window.scrollBy(0, 400);");
+            doScroll("400");
         }
 
         new Actions(driver).pause(Duration.ofSeconds(1)).click(sexButton).perform();
         new Actions(driver).pause(Duration.ofSeconds(1)).click(fieldExperience).perform();
         if (driverClass.equals(ChromeDriver.class)) {
-            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+            doScroll("1000");
         }
 
         new Actions(driver).pause(Duration.ofSeconds(2)).perform();
@@ -75,9 +88,9 @@ public class ResumePage {
         new Actions(driver).pause(Duration.ofSeconds(3)).sendKeys(fieldPosition, post).pause(Duration.ofSeconds(1)).perform();
 
         if (driverClass.equals(ChromeDriver.class)) {
-            jsExecutor.executeScript("window.scrollBy(0, 500);");
+            doScroll("500");
         } else {
-            jsExecutor.executeScript("window.scrollBy(0, 1000);");
+            doScroll("1000");
         }
 
         wait.until(ExpectedConditions.elementToBeClickable(sendButton));
@@ -86,71 +99,66 @@ public class ResumePage {
 
     public void deleteResume() {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        editButton.click();
+        editButton.get(0).click();
         littleWait.until(ExpectedConditions.elementToBeClickable(deleteButton));
         new Actions(driver).pause(Duration.ofSeconds(2)).click(deleteButton).perform();
         littleWait.until(ExpectedConditions.elementToBeClickable(finallyDeleteButton));
         finallyDeleteButton.click();
+        new Actions(driver).pause(Duration.ofSeconds(2)).perform();
     }
 
-    public void doScroll(){
+    public void doScroll(String px) {
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-        jsExecutor.executeScript("window.scrollBy(0, 1000);");
+        jsExecutor.executeScript("window.scrollBy(0, " + px + ");");
     }
 
-    public void changeResumeParamPersonalSettings(WebElement param){
-        param.click();
+    public void goToEditResume(int id) {
+        editButton.get(id).click();
+    }
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@name=\"firstName[0].string\"]")));
-        WebElement fieldForName = driver.findElement(By.xpath("//*[@name=\"firstName[0].string\"]"));
+    public void changeResumeParamPersonalSettings() {
+        WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        fieldForName.sendKeys(Keys.CONTROL + "A");
-        fieldForName.sendKeys(Keys.BACK_SPACE);
-        fieldForName.sendKeys("Дарья");
+        littleWait.until(ExpectedConditions.elementToBeClickable(personalSettings));
+        littleWait.until(ExpectedConditions.attributeToBeNotEmpty(personalSettings, "href"));
+        new Actions(driver).pause(Duration.ofSeconds(2)).click(personalSettings).perform();
 
-        doScroll();
+        littleWait.until(ExpectedConditions.visibilityOf(firstNameField));
+        firstNameField.sendKeys(Keys.CONTROL + "A");
+        firstNameField.sendKeys(Keys.BACK_SPACE);
+        firstNameField.sendKeys("Дарья");
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), 'Возможен')]")));
+        doScroll("700");
+
+        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), 'Возможен')]")));
         WebElement radioButton = driver.findElement(By.xpath("//*[contains(text(), 'Возможен')]"));
         radioButton.click();
 
-        new Actions(driver).pause(Duration.ofSeconds(1));
-
-        WebElement sendButton = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/form/div[4]/div/button"));
-        sendButton.click();
+        new Actions(driver).pause(Duration.ofSeconds(1)).click(sendEditedResume).perform();
     }
 
-    public void showResumeStatus(){
+    public void showResumeStatus() {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-qa='job-search-status-change-link']")));
+        littleWait.until(ExpectedConditions.visibilityOf(resumeStatus));
         new Actions(driver).click(resumeStatus).pause(Duration.ofSeconds(1)).perform();
     }
 
-    public void changeResumeStatus(int id){
+    public void changeResumeStatus(int id) {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-        littleWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@class='bloko-text']")));
-        WebElement changeStatusCheckbox = driver.findElements(By.xpath("//*[@class='bloko-text']")).get(id);
-        changeStatusCheckbox.click();
-
+        littleWait.until(ExpectedConditions.visibilityOfAllElements(changeStatusCheckbox));
+        changeStatusCheckbox.get(id).click();
         new Actions(driver).pause(Duration.ofSeconds(2)).click(setNewResumeStatus).pause(Duration.ofSeconds(2)).perform();
     }
 
-    public String getResumeStatusText(){
-       return myResumesStatus.getText();
+    public String getResumeStatusText() {
+        return myResumesStatus.getText();
     }
-    public void changeResumeParamLanguage(WebElement param){
+
+    public void changeResumeParamLanguage(WebElement param) {
         param.click();
-
-
     }
 
-    public void changeResumeParamCapabilities(WebElement param){
+    public void changeResumeParamCapabilities(WebElement param) {
         param.click();
-
     }
-
-
 }
