@@ -8,12 +8,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
 import project.ConfProperties;
 import project.pages.*;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ResumeTest {
@@ -131,9 +134,17 @@ public class ResumeTest {
             }
 
             accountPage.showMyResumes();
+
+            int count_before = resumePage.getResumesCount();
             resumePage.deleteResume();
 
-            //TODO: добавить проверку на удаление резюме
+            new Actions(driver).pause(Duration.ofSeconds(1)).perform();
+
+            resumePage.doCloseNotification();
+            int count_after = resumePage.getResumesCount();
+
+            assertEquals(1, count_before - count_after);
+
             loginPage.logout();
             driver.quit();
         });

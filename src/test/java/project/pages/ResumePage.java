@@ -26,7 +26,7 @@ public class ResumePage {
     @FindBy(xpath = "//*[contains(text(), 'Сохранить и опубликовать')]")
     WebElement sendButton;
     @FindBy(xpath = "//*[@class='applicant-resumes-action']/a[@data-qa='resume-edit']")
-    List<WebElement> editButton;
+    List<WebElement> editButton; //по количеству таких кнопок узнаем кол-во открытых резюме
     @FindBy(xpath = "//button[@class='bloko-button bloko-button_icon-only' and @data-qa='resume-delete']")
     WebElement deleteButton;
     @FindBy(xpath = "//button[@class='bloko-button' and @data-qa='resume-delete-confirm']")
@@ -47,6 +47,8 @@ public class ResumePage {
     WebElement sendEditedResume;
     @FindBy(xpath = "//a[@class='resume-block-edit resume-block-edit_capitalize' and @data-qa='resume-block-personal-edit']")
     WebElement personalSettings;
+    @FindBy(xpath = "//*[@class='bloko-notification__close']")
+    WebElement closeNotification;
 
     public ResumePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -152,6 +154,14 @@ public class ResumePage {
 
     public String getResumeStatusText() {
         return myResumesStatus.getText();
+    }
+
+    public int getResumesCount(){
+        return editButton.size();
+    }
+
+    public void doCloseNotification(){
+        closeNotification.click();
     }
 
     public void changeResumeParamLanguage(WebElement param) {
