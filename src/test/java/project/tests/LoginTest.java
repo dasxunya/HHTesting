@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest {
@@ -80,6 +81,7 @@ public class LoginTest {
             loginPage.login();
 
             loginPage.logout();
+            assertTrue(loginPage.isUserLogout());
             driver.quit();
         });
     }
