@@ -1,6 +1,5 @@
 package project.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -10,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 
 public class AccountPage {
@@ -18,7 +18,7 @@ public class AccountPage {
     @FindBy(xpath = "//*[@class='supernova-link' and contains(@data-qa,'mainmenu_vacancyResponses')]")
     WebElement responses;
     @FindBy(xpath = "//a[contains(@data-qa,'negotiations-tab')]")
-    WebElement readyResponses;
+    List<WebElement> readyResponses;
     @FindBy(xpath = "//*[@class='supernova-icon supernova-icon_chatik']")
     WebElement chats;
     @FindBy(xpath = "//*[@class='chatik-integration-iframe chatik-integration-iframe_loaded']")
@@ -33,7 +33,7 @@ public class AccountPage {
 
     public String getTitle() {
         showMyFeedbacks();
-        return readyResponses.getText();
+        return readyResponses.get(1).getText();
     }
 
     public void showChats() {
@@ -42,14 +42,14 @@ public class AccountPage {
         littleWait.until(ExpectedConditions.elementToBeClickable(chats));
         new Actions(driver).pause(Duration.ofSeconds(2)).click(chats).perform();
 
-        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class='chatik-integration-iframe chatik-integration-iframe_loaded']")));
+        littleWait.until(ExpectedConditions.visibilityOf(loadedChats));
     }
 
     public void showMyFeedbacks() {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
         littleWait.until(ExpectedConditions.elementToBeClickable(responses));
         responses.click();
-        littleWait.until(ExpectedConditions.elementToBeClickable(readyResponses));
+        littleWait.until(ExpectedConditions.elementToBeClickable(readyResponses.get(1)));
     }
 
     public void showMyResumes() {

@@ -1,6 +1,8 @@
 package project.pages;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -13,20 +15,22 @@ import java.time.Duration;
 public class LoginPage {
     public WebDriver driver;
 
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[2]/div/div/div/div/div[5]/a")
+    @FindBy(xpath = "//*[@class='supernova-button' and @data-qa='login']")
     WebElement buttonForEntry;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[5]/button[1]")
-    WebElement buttonForEmail;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[1]/fieldset/input")
-    WebElement emailField;
-    @FindBy(xpath = "/html/body/div[5]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/div[2]/form/div[5]/button[2]")
-    WebElement entryWithEmailAndPassButton;
-    @FindBy(xpath = "/html/body/div[5]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/form/div[1]/fieldset/input")
-    WebElement fieldForEntryWithEmail;
-    @FindBy(xpath = "//*[@id=\"HH-React-Root\"]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/form/div[2]/fieldset/input")
+    @FindBy(xpath = "//*[@class='bloko-link bloko-link_pseudo' and @data-qa='expand-login-by-password']")
+    WebElement entryWithEmailAndPasswordButton;
+    @FindBy(xpath = "//*[@class='bloko-input-text' and @data-qa='login-input-username']")
+    WebElement fieldForEmail;
+    @FindBy(xpath = "//*[@class='bloko-input-text' and @data-qa='login-input-password']")
     WebElement fieldForPassword;
-    @FindBy(xpath = "/html/body/div[5]/div/div[3]/div[1]/div/div/div/div/div/div[1]/div[1]/div/form/div[5]/div/button[1]")
+    @FindBy(xpath = "//*[@class='bloko-button bloko-button_kind-primary' and @data-qa='account-login-submit']")
     WebElement entry;
+    @FindBy(xpath = "//*[@class='supernova-icon-link-switch' and @data-qa='mainmenu_applicantProfile']")
+    WebElement profileButton;
+    @FindBy(xpath = "//span[@class='bloko-text bloko-text_strong']")
+    WebElement username;
+    @FindBy(xpath = "//button[@class='supernova-dropdown-option supernova-dropdown-option_highlight-warning' and @data-qa='mainmenu_logoffUser']")
+    WebElement exit;
 
     public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -34,32 +38,41 @@ public class LoginPage {
     }
 
     public void login() {
-        buttonForEntry.click();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        try {
-            wait.until(ExpectedConditions.attributeToBeNotEmpty(fieldForEntryWithEmail, "value"));
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("(document.getElementsByName('username')[0]).value=''");
-        } catch (TimeoutException ignored) {
-        }
+        wait.until(ExpectedConditions.elementToBeClickable(buttonForEntry));
+        buttonForEntry.click();
 
-        entryWithEmailAndPassButton.click();
-        fieldForEntryWithEmail.sendKeys(Keys.CONTROL + "A");
-        fieldForEntryWithEmail.sendKeys(Keys.BACK_SPACE);
-        wait.until(ExpectedConditions.not(ExpectedConditions.attributeToBeNotEmpty(fieldForEntryWithEmail, "value")));
-        new Actions(driver).sendKeys(fieldForEntryWithEmail, ConfProperties.getProperty("login")).sendKeys(fieldForPassword, ConfProperties.getProperty("password")).pause(Duration.ofSeconds(1)).click(entry).perform();
+        wait.until(ExpectedConditions.visibilityOf(entryWithEmailAndPasswordButton));
+        wait.until(ExpectedConditions.elementToBeClickable(entryWithEmailAndPasswordButton));
+        entryWithEmailAndPasswordButton.click();
+
+        fieldForEmail.sendKeys(Keys.CONTROL + "A");
+        fieldForEmail.sendKeys(Keys.BACK_SPACE);
+        wait.until(ExpectedConditions.not(ExpectedConditions.attributeToBeNotEmpty(fieldForEmail, "value")));
+        new Actions(driver).sendKeys(fieldForEmail, ConfProperties.getProperty("login")).sendKeys(fieldForPassword, ConfProperties.getProperty("password")).pause(Duration.ofSeconds(1)).click(entry).perform();
     }
 
     public void logout() {
-//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-//
-//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button")));
-//        WebElement span1 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"));
-//        span1.click();
-//
-//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[12]/div/div/div[2]/div[3]/div/form/button/span")));
-//        WebElement el = driver.findElement(By.xpath("/html/body/div[12]/div/div/div[2]/div[3]/div/form/button/span"));
-//        el.click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        wait.until(ExpectedConditions.visibilityOf(profileButton));
+        wait.until(ExpectedConditions.elementToBeClickable(profileButton));
+        new Actions(driver).pause(Duration.ofSeconds(1)).click(profileButton).pause(Duration.ofSeconds(1)).perform();
+
+        wait.until(ExpectedConditions.visibilityOf(exit));
+        wait.until(ExpectedConditions.elementToBeClickable(exit));
+        exit.click();
+    }
+
+    public String getUserName() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
+        WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+        wait.until(ExpectedConditions.visibilityOf(profileButton));
+        new Actions(driver).pause(Duration.ofSeconds(2)).click(profileButton).perform();
+
+        littleWait.until(ExpectedConditions.visibilityOf(username));
+        return username.getText();
     }
 }

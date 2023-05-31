@@ -1,16 +1,13 @@
 package project.tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.*;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
 import project.pages.LoginPage;
 
@@ -20,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest {
     public List<WebDriver> driverList;
     public static WebDriver chromeDriver;
@@ -55,8 +53,9 @@ public class LoginTest {
         driverList.add(firefoxDriver);
     }
 
+    @Order(1)
     @Test
-    public void testUserLoginAndLogout() {
+    public void testUserLogin() {
         driverList.forEach(driver -> {
             loginPage = new LoginPage(driver);
             driver.get(ConfProperties.getProperty("main-page"));
@@ -64,21 +63,21 @@ public class LoginTest {
 
             loginPage.login();
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            assertEquals("Daria Daria", loginPage.getUserName());
 
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button")));
-            WebElement span1 = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[10]/div/div[1]/div/button"));
-            span1.click();
+            driver.quit();
+        });
+    }
 
-            Class<? extends WebDriver> driverClass = driver.getClass();
-            if (driverClass.equals(FirefoxDriver.class)) {
-                span1.click();
-            }
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[12]/div/div/div[2]/div[1]/a/span")));
-            WebElement span2 = driver.findElement(By.xpath("/html/body/div[12]/div/div/div[2]/div[1]/a/span"));
+    @Order(2)
+    @Test
+    public void testUserLogout() {
+        driverList.forEach(driver -> {
+            loginPage = new LoginPage(driver);
+            driver.get(ConfProperties.getProperty("main-page"));
+            driver.manage().window().maximize();
 
-            assertEquals(span2.getText(), "Daria Daria");
+            loginPage.login();
 
             loginPage.logout();
             driver.quit();

@@ -132,6 +132,8 @@ public class FavoriteTest {
 
             //проверка что статус изменился на не добавленный в фавориты
             assertEquals("vacancy-search-mark-favorite_false", favoritePage.getLastIconStatus());
+
+            loginPage.logout();
             driver.quit();
         });
     }

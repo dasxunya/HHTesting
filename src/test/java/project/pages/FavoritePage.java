@@ -1,6 +1,5 @@
 package project.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -25,6 +24,9 @@ public class FavoritePage {
     @FindBy(xpath = "//button[@class='bloko-button bloko-button_icon-only-small bloko-button_scale-small bloko-button_appearance-outlined']")
     WebElement checkLastIcon;
 
+    @FindBy(xpath = "//*[@class='supernova-icon supernova-icon_favorites']")
+    WebElement favoriteIcon;
+
     public FavoritePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
@@ -32,10 +34,8 @@ public class FavoritePage {
 
     public void goToFavoritePage() {
         WebDriverWait bigWait = new WebDriverWait(driver, Duration.ofSeconds(40));
-
-        bigWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[8]/div[1]/a")));
-        WebElement favoriteIcon = driver.findElement(By.xpath("//*[@id=\"HH-React-Root\"]/div/div[2]/div[1]/div/div/div/div[8]/div[1]/a"));
-
+        bigWait.until(ExpectedConditions.visibilityOf(favoriteIcon));
+        bigWait.until(ExpectedConditions.elementToBeClickable(favoriteIcon));
         favoriteIcon.click();
     }
 
@@ -51,7 +51,7 @@ public class FavoritePage {
 
     public String getNotificationText() {
         WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='bloko-notification__content']")));
+        littleWait.until(ExpectedConditions.visibilityOf(notification));
         return notification.getText();
     }
 

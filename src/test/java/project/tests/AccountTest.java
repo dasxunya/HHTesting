@@ -124,6 +124,7 @@ public class AccountTest {
             resumePage.changeResumeStatus(4);
             assertEquals("Не ищу работу", resumePage.getResumeStatusText());
 
+            loginPage.logout();
             driver.quit();
         });
     }
