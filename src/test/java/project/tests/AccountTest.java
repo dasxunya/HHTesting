@@ -11,8 +11,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import project.ConfProperties;
-import project.pages.AccountPage;
-import project.pages.LoginPage;
+import project.pages.*;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class AccountTest {
     public static WebDriver firefoxDriver;
     public static LoginPage loginPage;
     public static AccountPage accountPage;
-
+    public static ResumePage resumePage;
 
     @BeforeAll
     public static void setupDrivers() {
@@ -71,14 +70,7 @@ public class AccountTest {
 
             loginPage.login();
 
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class='supernova-link' and contains(@data-qa,'mainmenu_vacancyResponses')]")));
-            WebElement responses = driver.findElement(By.xpath("//*[@class='supernova-link' and contains(@data-qa,'mainmenu_vacancyResponses')]"));
-            responses.click();
-
-            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@data-qa,'negotiations-tab')]")));
-            WebElement readyResponses = driver.findElements(By.xpath("//a[contains(@data-qa,'negotiations-tab')]")).get(1);
-            assertEquals("Все отклики", readyResponses.getText());
+            assertEquals("Все отклики", accountPage.getTitle());
             driver.quit();
         });
     }
@@ -98,14 +90,9 @@ public class AccountTest {
                 loginPage.login();
             }
 
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            accountPage.showChats();
 
-            littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class='supernova-icon supernova-icon_chatik']")));
-            WebElement chats = driver.findElement(By.xpath("//*[@class='supernova-icon supernova-icon_chatik']"));
-            new Actions(driver).pause(Duration.ofSeconds(2)).click(chats).perform();
-
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class='chatik-integration-iframe chatik-integration-iframe_loaded']")));
-            assertTrue(driver.findElement(By.xpath("//*[@class='chatik-integration-iframe chatik-integration-iframe_loaded']")).isDisplayed());
+            assertTrue(accountPage.getLoadedChats().isDisplayed());
 
             driver.quit();
         });
@@ -117,6 +104,7 @@ public class AccountTest {
         driverList.forEach(driver -> {
             loginPage = new LoginPage(driver);
             accountPage = new AccountPage(driver);
+            resumePage = new ResumePage(driver);
 
             Class<? extends WebDriver> driverClass = driver.getClass();
             if (driverClass.equals(FirefoxDriver.class)) {
@@ -128,40 +116,16 @@ public class AccountTest {
 
             if (driverClass.equals(FirefoxDriver.class)) {
                 loginPage.login();
-                WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                littleWait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class='supernova-link' and @data-qa='mainmenu_myResumes']")));
-                driver.findElement(By.xpath("//*[@class='supernova-link' and @data-qa='mainmenu_myResumes']")).click();
+                accountPage.showMyResumes();
             }
 
-            WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            resumePage.showResumeStatus();
+            resumePage.changeResumeStatus(1);
+            assertEquals("Рассматриваю входящие предложения", resumePage.getResumeStatusText());
 
-            littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-qa='job-search-status-change-link']")));
-            WebElement resumeStatus = driver.findElement(By.xpath("//*[@data-qa='job-search-status-change-link']"));
-
-            new Actions(driver).click(resumeStatus).pause(Duration.ofSeconds(1)).perform();
-
-            littleWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@class='bloko-text']")));
-            WebElement changeStatusCheckbox = driver.findElements(By.xpath("//*[@class='bloko-text']")).get(1);
-            changeStatusCheckbox.click();
-
-            WebElement sendStatusButton = driver.findElement(By.xpath("//*[@class='bloko-button bloko-button_kind-primary bloko-button_scale-small' and contains(@data-qa,'job-search-status-change-confirm')]"));
-            new Actions(driver).pause(Duration.ofSeconds(2)).click(sendStatusButton).pause(Duration.ofSeconds(2)).perform();
-
-            WebElement myStatus = driver.findElement(By.xpath("//*[@class='status--bw_g56JqpCbVsNvxVzXy']"));
-
-            assertEquals("Рассматриваю входящие предложения", myStatus.getText());
-
-            // Возвращаем статус обратно
-            new Actions(driver).click(resumeStatus).pause(Duration.ofSeconds(1)).perform();
-
-            littleWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@class='bloko-text']")));
-            WebElement returnStatusCheckbox = driver.findElements(By.xpath("//*[@class='bloko-text']")).get(4);
-            returnStatusCheckbox.click();
-
-            WebElement returnStatusButton = driver.findElement(By.xpath("//*[@class='bloko-button bloko-button_kind-primary bloko-button_scale-small' and contains(@data-qa,'job-search-status-change-confirm')]"));
-            new Actions(driver).pause(Duration.ofSeconds(2)).click(returnStatusButton).pause(Duration.ofSeconds(2)).perform();
-
-            assertEquals("Не ищу работу", myStatus.getText());
+            resumePage.showResumeStatus();
+            resumePage.changeResumeStatus(4);
+            assertEquals("Не ищу работу", resumePage.getResumeStatusText());
 
             driver.quit();
         });

@@ -31,12 +31,15 @@ public class ResumePage {
     WebElement deleteButton;
     @FindBy(xpath = "/html/body/div[12]/div/div[1]/div[2]/div/div[1]/form/button")
     WebElement finallyDeleteButton;
+    @FindBy(xpath = "//*[@data-qa='job-search-status-change-link']")
+    WebElement resumeStatus;
+    @FindBy(xpath = "//*[@class='status--bw_g56JqpCbVsNvxVzXy']")
+    WebElement myResumesStatus; //установленнный статус резюме
+    @FindBy(xpath = "//*[@class='bloko-button bloko-button_kind-primary bloko-button_scale-small' and contains(@data-qa,'job-search-status-change-confirm')]")
+    WebElement setNewResumeStatus;
     @FindBy(xpath = "")
-    WebElement personalInfo;
-    @FindBy(xpath = "")
-    WebElement languageInfo;
-    @FindBy(xpath = "")
-    WebElement capabilitiesInfo;
+    WebElement element;
+
 
     public ResumePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -118,6 +121,26 @@ public class ResumePage {
         sendButton.click();
     }
 
+    public void showResumeStatus(){
+        WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-qa='job-search-status-change-link']")));
+        new Actions(driver).click(resumeStatus).pause(Duration.ofSeconds(1)).perform();
+    }
+
+    public void changeResumeStatus(int id){
+        WebDriverWait littleWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        littleWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@class='bloko-text']")));
+        WebElement changeStatusCheckbox = driver.findElements(By.xpath("//*[@class='bloko-text']")).get(id);
+        changeStatusCheckbox.click();
+
+        new Actions(driver).pause(Duration.ofSeconds(2)).click(setNewResumeStatus).pause(Duration.ofSeconds(2)).perform();
+    }
+
+    public String getResumeStatusText(){
+       return myResumesStatus.getText();
+    }
     public void changeResumeParamLanguage(WebElement param){
         param.click();
 
@@ -128,4 +151,6 @@ public class ResumePage {
         param.click();
 
     }
+
+
 }

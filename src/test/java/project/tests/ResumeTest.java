@@ -158,5 +158,4 @@ public class ResumeTest {
             driver.quit();
         });
     }
-
 }
