@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ResumeTest {
@@ -62,19 +63,26 @@ public class ResumeTest {
         driverList.forEach(driver -> {
             loginPage = new LoginPage(driver);
             resumePage = new ResumePage(driver);
+            accountPage = new AccountPage(driver);
 
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
             loginPage.login();
-            resumePage.goToCreateResume(loginPage);
 
+            accountPage.showMyResumes();
+            int count_before = resumePage.getResumesCount();
+
+            resumePage.goToCreateResume(loginPage);
             Class<? extends WebDriver> driverClass = driver.getClass();
             if (driverClass.equals(FirefoxDriver.class)) {
                 resumePage.createResume("Руководитель");
-            } else resumePage.createResume("Помощник");
+            } else resumePage.createResume("Помощник Руководителя");
 
-            //TODO: добавить проверку на создание резюме
+            accountPage.showMyResumes();
+            int count_after = resumePage.getResumesCount();
+
+            assertEquals(1, count_after - count_before);
             driver.quit();
         });
     }
@@ -95,7 +103,6 @@ public class ResumeTest {
                 loginPage.login();
             }
 
-
             loginPage.waitProfileLoad();
             accountPage.showMyResumes();
 
@@ -111,9 +118,9 @@ public class ResumeTest {
 //            resumePage.changeResumeParamLanguage(language);
 //            resumePage.changeResumeParamCapabilities(capabilities);
 
-            //TODO: добавить проверку на смену праматеров - просто проверить на наличие выбранного текста на странце
-
-            driver.quit();
+            assertEquals("Daria Дарья", accountPage.getPersonalName());
+            assertTrue(accountPage.getTravelStatus().matches(".*?готова к переезду.*?"));
+//            driver.quit();
         });
     }
 

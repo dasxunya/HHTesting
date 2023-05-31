@@ -25,6 +25,10 @@ public class AccountPage {
     WebElement loadedChats;
     @FindBy(xpath = "//*[@class='supernova-link' and @data-qa='mainmenu_myResumes']")
     WebElement myResumes;
+    @FindBy(xpath = "//*[@class='bloko-header-1' and @data-qa='resume-personal-name']/span")
+    WebElement personalName;
+    @FindBy(xpath = "//*[@class='bloko-translate-guard']/p")
+    WebElement travelStatus;
 
     public AccountPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -60,5 +64,13 @@ public class AccountPage {
 
     public WebElement getLoadedChats() {
         return this.loadedChats;
+    }
+
+    public String getPersonalName() {
+        return personalName.getText();
+    }
+
+    public String getTravelStatus(){
+        return travelStatus.getText();
     }
 }

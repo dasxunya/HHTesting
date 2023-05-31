@@ -17,7 +17,7 @@ public class LoginPage {
 
     @FindBy(xpath = "//*[@class='supernova-button' and @data-qa='login']")
     WebElement buttonForEntry;
-    @FindBy(xpath = "//*[@class='bloko-link bloko-link_pseudo' and @data-qa='expand-login-by-password']")
+    @FindBy(xpath = "//button[@class='bloko-link bloko-link_pseudo' and @data-qa='expand-login-by-password']")
     WebElement entryWithEmailAndPasswordButton;
     @FindBy(xpath = "//*[@class='bloko-input-text' and @data-qa='login-input-username']")
     WebElement fieldForEmail;
@@ -45,8 +45,9 @@ public class LoginPage {
 
         wait.until(ExpectedConditions.visibilityOf(entryWithEmailAndPasswordButton));
         wait.until(ExpectedConditions.elementToBeClickable(entryWithEmailAndPasswordButton));
-        entryWithEmailAndPasswordButton.click();
+        new Actions(driver).pause(Duration.ofSeconds(1)).click(entryWithEmailAndPasswordButton).perform();
 
+        wait.until(ExpectedConditions.visibilityOf(fieldForPassword));
         fieldForEmail.sendKeys(Keys.CONTROL + "A");
         fieldForEmail.sendKeys(Keys.BACK_SPACE);
         wait.until(ExpectedConditions.not(ExpectedConditions.attributeToBeNotEmpty(fieldForEmail, "value")));

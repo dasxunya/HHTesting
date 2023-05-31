@@ -130,13 +130,18 @@ public class ResumePage {
         firstNameField.sendKeys(Keys.BACK_SPACE);
         firstNameField.sendKeys("Дарья");
 
-        doScroll("700");
+        doScroll("300");
 
         littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), 'Возможен')]")));
         WebElement radioButton = driver.findElement(By.xpath("//*[contains(text(), 'Возможен')]"));
         radioButton.click();
 
-        new Actions(driver).pause(Duration.ofSeconds(1)).click(sendEditedResume).perform();
+        littleWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), 'Женский')]")));
+        WebElement sexButtonCheckBox = driver.findElement(By.xpath("//*[contains(text(), 'Женский')]"));
+        sexButtonCheckBox.click();
+
+        doScroll("300");
+        new Actions(driver).pause(Duration.ofSeconds(2)).click(sendEditedResume).perform();
     }
 
     public void showResumeStatus() {
