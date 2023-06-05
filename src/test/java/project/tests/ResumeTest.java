@@ -120,7 +120,7 @@ public class ResumeTest {
 
             assertEquals("Daria Дарья", accountPage.getPersonalName());
             assertTrue(accountPage.getTravelStatus().matches(".*?готова к переезду.*?"));
-//            driver.quit();
+            driver.quit();
         });
     }
 

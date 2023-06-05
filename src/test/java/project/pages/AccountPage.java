@@ -70,7 +70,7 @@ public class AccountPage {
         return personalName.getText();
     }
 
-    public String getTravelStatus(){
+    public String getTravelStatus() {
         return travelStatus.getText();
     }
 }
