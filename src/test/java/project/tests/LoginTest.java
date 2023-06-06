@@ -78,7 +78,10 @@ public class LoginTest {
             driver.get(ConfProperties.getProperty("main-page"));
             driver.manage().window().maximize();
 
-            loginPage.login();
+            Class<? extends WebDriver> driverClass = driver.getClass();
+            if (driverClass.equals(FirefoxDriver.class)) {
+                loginPage.login();
+            }
 
             loginPage.logout();
             assertTrue(loginPage.isUserLogout());
